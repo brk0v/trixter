@@ -719,7 +719,7 @@ async fn main() -> io::Result<()> {
     let mut stream = Shutdowner::new(stream, rx);
 
     let killer = tokio::spawn(async move {
-        let _ = tx.send(io::Error::new(io::ErrorKind::Other, "test harness stop").into());
+        let _ = tx.send(io::Error::other("test harness stop").into());
     });
 
     let result = tokio::io::copy(&mut stream, &mut tokio::io::sink()).await;

@@ -50,9 +50,7 @@ async fn _example1() -> io::Result<()> {
     // Kill communication with provided error
     let (tx_err, rx_err) = oneshot::channel();
     let stream = Shutdowner::new(stream, rx_err);
-    tx_err
-        .send(io::Error::new(io::ErrorKind::Other, "unexpected").into())
-        .unwrap();
+    tx_err.send(io::Error::other("unexpected").into()).unwrap();
 
     // Corrupt data with 0.5% probability
     let stream = Corrupter::new(stream, 0.005);

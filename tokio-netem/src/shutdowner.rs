@@ -34,7 +34,7 @@
 //! // Trip the shutdown later from some control task:
 //! tokio::spawn(async move {
 //!     sleep(Duration::from_millis(100)).await;
-//!     let _ = tx.send(io::Error::new(io::ErrorKind::Other, "policy revoked").into());
+//!     let _ = tx.send(io::Error::other("policy revoked").into());
 //! });
 //!
 //! // This copy will abort as soon as the shutdown signal is received.

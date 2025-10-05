@@ -1,6 +1,6 @@
 [package]
 name = "tokio-netem"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["Viacheslav Biriukov <v.v.biriukov@gmail.com>"]
 license = "MIT"
@@ -8,13 +8,7 @@ repository = "https://github.com/brk0v/trixter"
 categories = ["asynchronous", "network-programming"]
 keywords = ["async", "chaos", "network", "netem", "tokio-netem"]
 description = """
-tokio-netem — pragmatic I/O adapters for chaos & network emulation
-
-Small, composable Tokio adapters that let you shape and sabotage I/O for tests, demos, and staging: latency,
-throttling, slicing, terminations, forced shutdowns, data injections and data corruption without touching your application
-code.
-
-Works with anything that implements AsyncRead/AsyncWrite: TcpStream, TLS, pipes, DuplexStream, etc.
+tokio-netem — pragmatic AsyncRead, AsyncWrite I/O adapters for chaos & network emulation
 """
 
 [dependencies]
