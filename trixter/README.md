@@ -73,7 +73,6 @@ Base URL is the `--api` address, e.g. `http://127.0.0.1:8888`.
 ### Data model
 
 ```json
-// ConnectionStatus
 {
   "conn_info": {
     "id": "pN7e3y...",
