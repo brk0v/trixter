@@ -1,0 +1,39 @@
+[package]
+name = "tokio-netem"
+version = "0.1.0"
+edition = "2021"
+authors = ["Viacheslav Biriukov <v.v.biriukov@gmail.com>"]
+license = "MIT"
+repository = "https://github.com/brk0v/trixter"
+categories = ["asynchronous", "network-programming"]
+keywords = ["async", "tcp", "proxy", "chaos"]
+description = """
+tokio-netem — pragmatic I/O adapters for chaos & network emulation
+
+Small, composable Tokio adapters that let you shape and sabotage I/O for tests, demos, and staging:
+
+- Delayer — inject fixed latency on reads and writes
+- Throttler — cap throughput (bytes/sec) on reads and writes
+- Terminator — probabilistically kill a stream (blown-fuse behavior)
+- Shutdowner — terminate a stream on demand via `oneshot` signal
+- Sliced Writer — enforce fixed-size write chunks, flush between chunks
+
+Works with anything that implements AsyncRead/AsyncWrite: TcpStream, TLS, pipes, DuplexStream, etc.
+"""
+
+[dependencies]
+tokio = { workspace = true }
+clap = { workspace = true }
+anyhow = { workspace = true }
+futures = { workspace = true }
+pin-project = { workspace = true }
+humantime = { workspace = true }
+rand = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+bytes = { workspace = true }
+socket2 = { workspace = true }
+smallvec = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["full", "test-util"] }

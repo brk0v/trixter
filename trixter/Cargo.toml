@@ -1,0 +1,34 @@
+[package]
+name = "trixter"
+version = "0.1.0"
+edition = "2024"
+authors = ["Viacheslav Biriukov <v.v.biriukov@gmail.com>"]
+license = "MIT"
+repository = "https://github.com/brk0v/trixter"
+categories = ["asynchronous", "network-programming"]
+keywords = ["async", "tcp", "proxy", "chaos"]
+description = """
+Trixter – Chaos Monkey TCP Proxy
+
+A high‑performance, runtime‑tunable TCP chaos proxy — a minimal, blazing‑fast alternative to Toxiproxy written in Rust with tokio.
+It lets you inject latency, throttle bandwidth, slice writes (to simulate small MTUs/Nagle‑like behavior), randomly terminate connections, and hard‑timeout sessions — all controllable per connection via a simple REST API.
+"""
+
+[dependencies]
+tokio = { workspace = true }
+clap = { workspace = true }
+anyhow = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+rand = { workspace = true }
+humantime = {workspace = true}
+
+dashmap = "6"
+ahash = "0.8"
+axum = "0.8"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "1"
+nanoid = "0.4.0"
+
+tokio-netem = { version = "0.1.0", path = "../tokio-netem" }
