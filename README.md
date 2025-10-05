@@ -2,11 +2,10 @@
 
 - [`trixter`](#trixter--chaos-monkey-tcp-proxy) — a high‑performance, runtime‑tunable TCP chaos proxy — a minimal, blazing‑fast written in Rust with **Tokio**. It lets you inject latency, throttle bandwidth, slice writes (to simulate small MTUs/Nagle‑like behavior), corrupt bytes in flight by injecting random bytes, randomly terminate connections, and hard‑timeout sessions – all controllable per connection via a simple REST API.
 
-- [`tokio-netem`](tokio-netem/README.md) — a collection of Tokio `AsyncRead`/`AsyncWrite` adapters (delay, throttle, slice, terminate, shutdown, corrupt data, inject data) that power the `Trixter` proxy and can be used independently in tests and harnesses.
+- [`tokio-netem`](tokio-netem/README.md) — a collection of Tokio `AsyncRead`/`AsyncWrite` adapters (delay, throttle, slice, terminate, shutdown, corrupt data, inject data) that power the `Trixter` proxy and can be used independently in tests and harnesses. [![Crates.io][crates-badge]][crates-url]
 
 The remainder of this document dives into the proxy. For the adapter crate’s detailed guide, follow the `tokio-netem` link above.
 
-[![Crates.io][crates-badge]][crates-url]
 [![MIT licensed][mit-badge]][mit-url]
 
 [crates-badge]: https://img.shields.io/crates/v/tokio-netem.svg

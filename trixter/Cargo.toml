@@ -6,12 +6,14 @@ authors = ["Viacheslav Biriukov <v.v.biriukov@gmail.com>"]
 license = "MIT"
 repository = "https://github.com/brk0v/trixter"
 categories = ["asynchronous", "network-programming"]
-keywords = ["async", "tcp", "proxy", "chaos"]
+keywords = ["async", "proxy", "chaos", "network", "trixter"]
 description = """
 Trixter – Chaos Monkey TCP Proxy
 
-A high‑performance, runtime‑tunable TCP chaos proxy — a minimal, blazing‑fast alternative to Toxiproxy written in Rust with tokio.
-It lets you inject latency, throttle bandwidth, slice writes (to simulate small MTUs/Nagle‑like behavior), randomly terminate connections, and hard‑timeout sessions — all controllable per connection via a simple REST API.
+A high‑performance, runtime‑tunable TCP chaos proxy.
+It lets you inject latency, throttle bandwidth, slice writes
+(to simulate small MTUs/Nagle‑like behavior), corrupt bytes in flight by injecting random bytes,
+randomly terminate connections, and hard‑timeout sessions – all controllable per connection via a simple REST API.
 """
 
 [dependencies]
