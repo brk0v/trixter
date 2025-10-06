@@ -28,25 +28,45 @@ A high‑performance, runtime‑tunable TCP chaos proxy — a minimal, blazing�
 
 ## Quick start
 
-### 1) Build
+### 1. Run an upstream echo server (demo)
+
+Use any TCP server. Examples:
+
+```bash
+nc -lk 127.0.0.1 8181
+```
+
+### 2. Run `trixter` chaos proxy
+
+with `docker`:
+
+```bash
+docker run --network host -it --rm ghcr.io/brk0v/trixter \
+    --listen 0.0.0.0:8080 \
+    --upstream 127.0.0.1:8181 \
+    --api 127.0.0.1:8888 \
+    --delay-ms 0 \
+    --throttle-rate-bytes 0 \
+    --slice-size-bytes 0 \
+    --corrupt-probability-rate 0.0 \
+    --terminate-probability-rate 0.0 \
+    --connection-duration-ms 0
+```
+
+or build from scratch:
 
 ```bash
 cd trixter/trixter
 cargo build --release
 ```
 
-### 2) Run an upstream echo server (demo)
-
-Use any TCP server. Examples:
+or install with `cargo`:
 
 ```bash
-# Example: simple echo with netcat (macOS/Linux)
-nc -lk 127.0.0.1 8181
-# or Python
-python3 -m socketserver -b 127.0.0.1 8181
+cargo install trixter
 ```
 
-### 3) Start the trixter proxy
+and run:
 
 ```bash
 RUST_LOG=info \
@@ -61,6 +81,8 @@ RUST_LOG=info \
   --terminate-probability-rate 0.0 \
   --connection-duration-ms 0
 ```
+
+### 3. Test
 
 Now connect your app/CLI to `localhost:8080`. The proxy forwards to `127.0.0.1:8181`.
 
