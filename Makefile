@@ -12,7 +12,7 @@ check:
 	cargo check
 
 .PHONY: clippy
-check:
+clippy:
 	cargo clippy --all-targets
 
 .PHONY: clean

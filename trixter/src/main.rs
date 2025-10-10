@@ -73,6 +73,10 @@ struct Config {
     /// Timeout for a proxy connection
     #[arg(long, value_name = "ms", default_value_t = 0)]
     connection_duration_ms: u64,
+
+    /// Optional seed used for deterministic randomization
+    #[arg(long)]
+    random_seed: Option<u64>,
 }
 
 type ConnId = String;
@@ -375,6 +379,11 @@ async fn handle_connection(
 
     let (tx, rx) = oneshot::channel();
 
+    let seed = config
+        .random_seed
+        .expect("random seed initialized during startup");
+    let mut base_rng = SmallRng::seed_from_u64(seed);
+
     let downstream = downstream
         .delay_writes_dyn(delay.clone())
         .throttle_writes_dyn(throttle_rate.clone())
@@ -382,21 +391,20 @@ async fn handle_connection(
     let downstream = Terminator::from_rng(
         downstream,
         terminate_probability_rate.clone(),
-        &mut SmallRng::from_rng(&mut rand::rng()),
+        &mut base_rng,
     );
-    let downstream = Corrupter::new(downstream, corrupt_probability_rate.clone());
+    let downstream =
+        Corrupter::from_rng(downstream, corrupt_probability_rate.clone(), &mut base_rng);
     let mut downstream = Shutdowner::new(downstream, rx);
 
     let upstream = upstream
         .delay_writes_dyn(delay.clone())
         .throttle_writes_dyn(throttle_rate.clone())
         .slice_writes_dyn(slice_size.clone());
-    let upstream = Terminator::from_rng(
-        upstream,
-        terminate_probability_rate.clone(),
-        &mut SmallRng::from_rng(&mut rand::rng()),
-    );
-    let mut upstream = Corrupter::new(upstream, corrupt_probability_rate.clone());
+    let upstream =
+        Terminator::from_rng(upstream, terminate_probability_rate.clone(), &mut base_rng);
+    let mut upstream =
+        Corrupter::from_rng(upstream, corrupt_probability_rate.clone(), &mut base_rng);
 
     let id = nanoid!();
 
@@ -458,8 +466,19 @@ async fn handle_connection(
 #[tokio::main(flavor = "multi_thread")]
 async fn main() -> anyhow::Result<()> {
     tracing_subscriber::fmt::init();
-    let cfg = Config::parse();
+    let mut cfg = Config::parse();
     cfg.validate()?;
+
+    if cfg.random_seed.is_none() {
+        let seed = rand::random::<u64>();
+        cfg.random_seed = Some(seed);
+    }
+    info!(
+        "random seed: {}",
+        cfg.random_seed
+            .expect("random seed initialized during startup")
+    );
+
     let config = Arc::new(cfg);
 
     let connections = Arc::new(DashMap::with_hasher(RandomState::new()));
@@ -498,7 +517,12 @@ async fn main() -> anyhow::Result<()> {
         tokio::select! {
             res = listener.accept() => match res {
                 Ok((stream, addr)) => {
-                    tokio::spawn(handle_connection(stream, addr, config.clone(), connections.clone()));
+                    tokio::spawn(handle_connection(
+                        stream,
+                        addr,
+                        config.clone(),
+                        connections.clone(),
+                    ));
                 }
                 Err(e) => {
                     error!(%e, "accept failed");

@@ -39,7 +39,8 @@ A high‑performance, runtime‑tunable TCP chaos proxy — a minimal, blazing�
   * **Hard timeout**: stop a session after N milliseconds.
 * **REST API** to list connections and change settings on the fly.
 * **Targeted kill**: shut down a single connection with a reason.
-* **RST on chaos**: resets (best‑effort) when a timeout/termination triggers.
+* **Deterministic chaos**: seed the RNG for reproducible scenarios.
+* **RST on chaos**: resets (best-effort) when a timeout/termination triggers.
 
 ---
 
@@ -67,7 +68,8 @@ docker run --network host -it --rm ghcr.io/brk0v/trixter \
     --slice-size-bytes 0 \
     --corrupt-probability-rate 0.0 \
     --terminate-probability-rate 0.0 \
-    --connection-duration-ms 0
+    --connection-duration-ms 0 \
+    --random-seed 42
 ```
 
 or build from scratch:
@@ -96,7 +98,8 @@ RUST_LOG=info \
   --slice-size-bytes 0 \
   --corrupt-probability-rate 0.0 \
   --terminate-probability-rate 0.0 \
-  --connection-duration-ms 0
+  --connection-duration-ms 0 \
+  --random-seed 42
 ```
 
 ### 3. Test
@@ -243,9 +246,12 @@ curl -i -X PATCH \
 --terminate-probability-rate <0..1> # 0.0 = off (default)
 --corrupt-probability-rate <0..1>   # 0.0 = off (default)
 --connection-duration-ms <ms>       # 0 = unlimited (default)
+--random-seed <u64>                 # seed RNG for deterministic chaos (optional)
 ```
 
-> All of the above can be changed **per connection** at runtime via the REST API, except `--connection-duration-ms` which is a process‑wide default applied to new connections.
+> All of the above can be changed **per connection** at runtime via the REST API, except `--connection-duration-ms` which is a process-wide default applied to new connections.
+>
+> Omit `--random-seed` to draw entropy for every run; set it when you want bit-for-bit reproducibility.
 
 ---
 
@@ -340,6 +346,18 @@ curl -s -X POST localhost:8888/connections/$ID/shutdown \
 * Discover the right connection (by `downstream`/`upstream` pair) via `GET /connections`.
 * Apply chaos during specific test phases with `PATCH` calls.
 * Always clean up with `POST /connections/{id}/shutdown` to free ports quickly.
+
+### Reproduce CI failures
+
+Omit `--random-seed` in CI so each run draws fresh entropy. When a failure hits, check the proxy logs for the `random seed: <value>` line and replay the scenario locally with that seed:
+
+```bash
+trixter \
+  --listen 0.0.0.0:8080 \
+  --upstream 127.0.0.1:8181 \
+  --api 127.0.0.1:8888 \
+  --random-seed 123456789
+```
 
 ---
 
