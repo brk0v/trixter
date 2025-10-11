@@ -131,9 +131,8 @@ Base URL is the `--api` address, e.g. `http://127.0.0.1:8888`.
 
 Notes:
 
-* `delay` serializes as a [`std::time::Duration`](https://docs.rs/serde/latest/serde/ser/trait.Serializer.html) object with `secs`/`nanos` fields (zeroed when the delay is disabled).
 * `id` is unique per connection; use it to target a single connection.
-* `corrupt_probability_rate` reports the current per-operation flip probability (`0.0` when corruption is off).
+* `corrupt_probability_rate` and `terminate_probability_rate` report the current per-operation flip probability (`0.0` when it is off).
 
 ### Health check
 
@@ -342,10 +341,11 @@ curl -s -X POST localhost:8888/connections/$ID/shutdown \
 
 ## Integration: CI & E2E tests
 
-* Spin up the proxy as a sidecar/container.
-* Discover the right connection (by `downstream`/`upstream` pair) via `GET /connections`.
-* Apply chaos during specific test phases with `PATCH` calls.
-* Always clean up with `POST /connections/{id}/shutdown` to free ports quickly.
+* Spin up the proxy as a sidecar/container with some global defaults.
+* If you need more flexibility:
+    * Discover the right connection (by `downstream`/`upstream` pair) via `GET /connections`.
+    * Apply chaos during specific test phases with `PATCH` calls.
+    * Always clean up with `POST /connections/{id}/shutdown` to free ports quickly.
 
 ### Reproduce CI failures
 
